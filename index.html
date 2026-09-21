@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TuOS Made BY Tudustech</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="setup-modal-container">
+    <div class="setup-window">
+      <div class="setup-sidebar">
+        <div class="setup-sidebar-header">
+          <img src="Images/LaunchPad.png" alt="Logo" class="menu-icon-img">
+          <h3>Setup Assistant</h3>
+        </div>
+        <ul class="setup-steps-list">
+          <li class="step-item active" id="step-nav-1">1. Welcome</li>
+          <li class="step-item" id="step-nav-2">2. User Account</li>
+          <li class="step-item" id="step-nav-3">3. Finalizing</li>
+        </ul>
+      </div>
+
+      <div class="setup-main">
+        <div class="setup-step active" id="setup-step-1">
+          <img src="Images/LaunchPad.png" alt="Welcome" class="setup-banner-img">
+          <h2>Welcome to TuOS</h2>
+          <p class="setup-subtitle">Select your country or region to begin.</p>
+          <div class="setup-list-box">
+            <div class="setup-list-row selected" onclick="selectRegion(this)">Romania</div>
+            <div class="setup-list-row" onclick="selectRegion(this)">United States</div>
+            <div class="setup-list-row" onclick="selectRegion(this)">United Kingdom</div>
+            <div class="setup-list-row" onclick="selectRegion(this)">Germany</div>
+            <div class="setup-list-row" onclick="selectRegion(this)">Japan</div>
+          </div>
+          <div class="setup-nav-bar">
+            <span></span>
+            <button class="setup-btn primary" onclick="nextSetupStep(2)">Continue</button>
+          </div>
+        </div>
+
+        <div class="setup-step" id="setup-step-2">
+          <img src="Images/Folder.png" alt="User Avatar" class="setup-banner-img avatar-round">
+          <h2>Create User Account</h2>
+          <p class="setup-subtitle">Personalize your system profile and password.</p>
+          <div class="setup-form">
+            <div class="input-group">
+              <label>Full Name</label>
+              <input type="text" id="setup-name" value="Tudustech" placeholder="Enter your name">
+            </div>
+            <div class="input-group">
+              <label>Password</label>
+              <input type="password" id="setup-pass" placeholder="Create password (leave blank for none)">
+            </div>
+          </div>
+          <div class="setup-nav-bar">
+            <button class="setup-btn" onclick="nextSetupStep(1)">Back</button>
+            <button class="setup-btn primary" onclick="saveUserAccountAndFinalize()">Continue</button>
+          </div>
+        </div>
+
+        <div class="setup-step" id="setup-step-3">
+          <img src="Images/Settings.png" alt="Finalizing" class="setup-banner-img logo-spin">
+          <h2>Configuring TuOS...</h2>
+          <p class="setup-subtitle">Setting up applications and custom preferences.</p>
+          <div class="setup-progress-container">
+            <div class="setup-progress-bar" id="setup-progress"></div>
+          </div>
+          <p class="setup-status" id="setup-status-text">Preparing desktop...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="lock-screen">
+    <div class="lock-content">
+      <div class="lock-clock-section">
+        <h1 id="lock-time">12:00</h1>
+        <p id="lock-date">Loading...</p>
+      </div>
+
+      <div class="lock-user-section">
+        <div class="lock-avatar">
+          <img src="Images/Folder.png" alt="Avatar" class="avatar-img">
+        </div>
+        <h2 class="lock-username">Tudustech</h2>
+        <form class="lock-form" onsubmit="unlockScreen(event)">
+          <input type="password" id="lock-pass" placeholder="Enter Password" autocomplete="off">
+          <button type="submit" class="lock-submit-btn">&gt;</button>
+        </form>
+        <p class="lock-hint" id="lock-hint-msg">Press Enter to unlock</p>
+      </div>
+    </div>
+  </div>
+
+  <header class="top-bar">
+    <div class="left-menu">
+      <span class="apple-logo" onclick="toggleDropdown('apple-dropdown')">
+        <img src="Images/LaunchPad.png" alt="Menu" class="topbar-logo-img">
+      </span>
+      <span class="app-name">TuOS</span>
+      <span class="menu-item" onclick="openWindow('finder-window')">Finder</span>
+      <span class="menu-item" onclick="openWindow('notes-window')">File</span>
+      <span class="menu-item" onclick="openWindow('settings-window')">Preferences</span>
+    </div>
+
+    <div id="apple-dropdown" class="dropdown-menu">
+      <div class="dropdown-item" onclick="openWindow('about-window'); closeAllDropdowns();">About TuOS</div>
+      <div class="dropdown-divider"></div>
+      <div class="dropdown-item" onclick="lockScreen(); closeAllDropdowns();">Lock Screen</div>
+      <div class="dropdown-item" onclick="resetSetup();">Reset Setup Assistant...</div>
+      <div class="dropdown-item" onclick="location.reload();">Restart TuOS...</div>
+    </div>
+
+    <div class="right-menu">
+      <span class="menu-icon" onclick="toggleDropdown('control-center-dropdown')" title="Control Center">
+        <img src="Images/Settings.png" alt="Control" class="topbar-icon-img">
+      </span>
+      <span class="menu-icon" onclick="lockScreen()" title="Lock TuOS">
+        <span class="text-icon">Lock</span>
+      </span>
+      <span id="clock">12:00 PM</span>
+    </div>
+
+    <div id="control-center-dropdown" class="control-center">
+      <div class="cc-row">
+        <div class="cc-tile active" onclick="this.classList.toggle('active')">
+          <img src="Images/Settings.png" alt="Icon" class="cc-icon-img">
+          <div>
+            <strong>Wi-Fi</strong>
+            <small>TuOS 5G</small>
+          </div>
+        </div>
+        <div class="cc-tile active" onclick="this.classList.toggle('active')">
+          <img src="Images/Settings.png" alt="Icon" class="cc-icon-img">
+          <div>
+            <strong>Bluetooth</strong>
+            <small>On</small>
+          </div>
+        </div>
+      </div>
+      <div class="cc-slider-box">
+        <label>Display Brightness</label>
+        <input type="range" min="30" max="100" value="100" id="brightness-slider" oninput="adjustBrightness(this.value)">
+      </div>
+      <div class="cc-slider-box">
+        <label>Volume</label>
+        <input type="range" min="0" max="100" value="75">
+      </div>
+    </div>
+  </header>
+
+  <main class="desktop" id="desktop">
+
+    <div class="window" id="about-window" style="top: 80px; left: 100px; width: 300px;">
+      <div class="window-header">
+        <div class="traffic-lights">
+          <span class="dot close" onclick="closeWindow('about-window')"></span>
+          <span class="dot minimize" onclick="minimizeWindow('about-window')"></span>
+          <span class="dot maximize" onclick="toggleMaximize('about-window')"></span>
+        </div>
+        <div class="window-title">About TuOS</div>
+      </div>
+      <div class="window-body about-body">
+        <img src="Images/LaunchPad.png" alt="TuOS" class="about-app-img">
+        <h2>TuOS</h2>
+        <p class="version">Version 2.0</p>
+        <p class="creator">Crafted by Tudustech</p>
+      </div>
+    </div>
+
+    <div class="window" id="finder-window" style="top: 100px; left: 160px; width: 480px; height: 320px;">
+      <div class="window-header">
+        <div class="traffic-lights">
+          <span class="dot close" onclick="closeWindow('finder-window')"></span>
+          <span class="dot minimize" onclick="minimizeWindow('finder-window')"></span>
+          <span class="dot maximize" onclick="toggleMaximize('finder-window')"></span>
+        </div>
+        <div class="window-title">Finder</div>
+      </div>
+      <div class="window-body finder-body">
+        <div class="finder-sidebar">
+          <p class="sidebar-title">Favorites</p>
+          <div class="sidebar-item active">Applications</div>
+          <div class="sidebar-item" onclick="openWindow('notes-window')">Notes</div>
+          <div class="sidebar-item" onclick="openWindow('calc-window')">Calculator</div>
+        </div>
+        <div class="finder-files">
+          <div class="file-item" ondblclick="openWindow('notes-window')">
+            <img src="Images/Notes.png" alt="Notes" class="file-icon">
+            <span>Notes.app</span>
+          </div>
+          <div class="file-item" ondblclick="openWindow('calc-window')">
+            <img src="Images/Calculator.png" alt="Calculator" class="file-icon">
+            <span>Calculator.app</span>
+          </div>
+          <div class="file-item" ondblclick="openWindow('weather-window')">
+            <img src="Images/Weather.png" alt="Weather" class="file-icon">
+            <span>Weather.app</span>
+          </div>
+          <div class="file-item" ondblclick="openWindow('settings-window')">
+            <img src="Images/Settings.png" alt="Settings" class="file-icon">
+            <span>Settings.app</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="window" id="notes-window" style="top: 130px; left: 380px; width: 340px; height: 250px;">
+      <div class="window-header">
+        <div class="traffic-lights">
+          <span class="dot close" onclick="closeWindow('notes-window')"></span>
+          <span class="dot minimize" onclick="minimizeWindow('notes-window')"></span>
+          <span class="dot maximize" onclick="toggleMaximize('notes-window')"></span>
+        </div>
+        <div class="window-title">Notes</div>
+      </div>
+      <div class="window-body">
+        <textarea id="notes-textarea" class="notes-textarea" placeholder="Auto-saved notes... Type your thoughts here."></textarea>
+      </div>
+    </div>
+
+    <div class="window" id="calc-window" style="top: 150px; left: 700px; width: 230px;">
+      <div class="window-header">
+        <div class="traffic-lights">
+          <span class="dot close" onclick="closeWindow('calc-window')"></span>
+          <span class="dot minimize" onclick="minimizeWindow('calc-window')"></span>
+          <span class="dot maximize" onclick="toggleMaximize('calc-window')"></span>
+        </div>
+        <div class="window-title">Calculator</div>
+      </div>
+      <div class="window-body calc-body">
+        <input type="text" id="calc-display" readonly value="0">
+        <div class="calc-buttons">
+          <button onclick="clearCalc()">C</button>
+          <button onclick="appendCalc('/')">/</button>
+          <button onclick="appendCalc('*')">*</button>
+          <button onclick="deleteCalc()">DEL</button>
+          <button onclick="appendCalc('7')">7</button>
+          <button onclick="appendCalc('8')">8</button>
+          <button onclick="appendCalc('9')">9</button>
+          <button class="orange" onclick="appendCalc('-')">-</button>
+          <button onclick="appendCalc('4')">4</button>
+          <button onclick="appendCalc('5')">5</button>
+          <button onclick="appendCalc('6')">6</button>
+          <button class="orange" onclick="appendCalc('+')">+</button>
+          <button onclick="appendCalc('1')">1</button>
+          <button onclick="appendCalc('2')">2</button>
+          <button onclick="appendCalc('3')">3</button>
+          <button class="orange" onclick="calculateResult()">=</button>
+          <button class="zero-btn" onclick="appendCalc('0')">0</button>
+          <button onclick="appendCalc('.')">.</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="window" id="weather-window" style="top: 160px; left: 440px; width: 280px;">
+      <div class="window-header">
+        <div class="traffic-lights">
+          <span class="dot close" onclick="closeWindow('weather-window')"></span>
+          <span class="dot minimize" onclick="minimizeWindow('weather-window')"></span>
+          <span class="dot maximize" onclick="toggleMaximize('weather-window')"></span>
+        </div>
+        <div class="window-title">Weather</div>
+      </div>
+      <div class="window-body weather-body">
+        <div class="weather-city" id="weather-city">Bucharest</div>
+        <img src="Images/Weather.png" alt="Weather Icon" class="weather-display-img">
+        <div class="weather-temp">22 C</div>
+        <div class="weather-desc">Sunny and Clear</div>
+      </div>
+    </div>
+
+    <div class="window" id="settings-window" style="top: 140px; left: 240px; width: 320px;">
+      <div class="window-header">
+        <div class="traffic-lights">
+          <span class="dot close" onclick="closeWindow('settings-window')"></span>
+          <span class="dot minimize" onclick="minimizeWindow('settings-window')"></span>
+          <span class="dot maximize" onclick="toggleMaximize('settings-window')"></span>
+        </div>
+        <div class="window-title">System Settings</div>
+      </div>
+      <div class="window-body settings-body">
+        <div class="settings-row">
+          <span>Lock Screen</span>
+          <button class="settings-btn" onclick="lockScreen()">Lock System</button>
+        </div>
+        <div class="settings-row">
+          <span>Clear Storage</span>
+          <button class="settings-btn" onclick="resetSetup()">Reset TuOS</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="launchpad-overlay" onclick="toggleLaunchpad()">
+      <div class="launchpad-grid" onclick="event.stopPropagation()">
+        <div class="launchpad-app" onclick="openWindow('finder-window'); toggleLaunchpad();">
+          <img src="Images/Folder.png" alt="Finder">
+          <span>Finder</span>
+        </div>
+        <div class="launchpad-app" onclick="openWindow('notes-window'); toggleLaunchpad();">
+          <img src="Images/Notes.png" alt="Notes">
+          <span>Notes</span>
+        </div>
+        <div class="launchpad-app" onclick="openWindow('calc-window'); toggleLaunchpad();">
+          <img src="Images/Calculator.png" alt="Calculator">
+          <span>Calculator</span>
+        </div>
+        <div class="launchpad-app" onclick="openWindow('weather-window'); toggleLaunchpad();">
+          <img src="Images/Weather.png" alt="Weather">
+          <span>Weather</span>
+        </div>
+        <div class="launchpad-app" onclick="openWindow('settings-window'); toggleLaunchpad();">
+          <img src="Images/Settings.png" alt="Settings">
+          <span>Settings</span>
+        </div>
+        <div class="launchpad-app" onclick="openWindow('about-window'); toggleLaunchpad();">
+          <img src="Images/LaunchPad.png" alt="About">
+          <span>About TuOS</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="dock-container">
+    <div class="dock" id="macos-dock">
+      <div class="dock-wrapper" onclick="toggleLaunchpad()" data-app="launchpad">
+        <button class="dock-item" title="LaunchPad">
+          <img src="Images/LaunchPad.png" alt="LaunchPad" class="dock-icon">
+        </button>
+        <span class="dock-dot" id="dot-launchpad"></span>
+      </div>
+      <div class="dock-wrapper" onclick="toggleWindow('finder-window')" data-app="finder-window">
+        <button class="dock-item" title="Finder">
+          <img src="Images/Folder.png" alt="Finder" class="dock-icon">
+        </button>
+        <span class="dock-dot" id="dot-finder-window"></span>
+      </div>
+      <div class="dock-wrapper" onclick="toggleWindow('notes-window')" data-app="notes-window">
+        <button class="dock-item" title="Notes">
+          <img src="Images/Notes.png" alt="Notes" class="dock-icon">
+        </button>
+        <span class="dock-dot" id="dot-notes-window"></span>
+      </div>
+      <div class="dock-wrapper" onclick="toggleWindow('calc-window')" data-app="calc-window">
+        <button class="dock-item" title="Calculator">
+          <img src="Images/Calculator.png" alt="Calculator" class="dock-icon">
+        </button>
+        <span class="dock-dot" id="dot-calc-window"></span>
+      </div>
+      <div class="dock-wrapper" onclick="toggleWindow('weather-window')" data-app="weather-window">
+        <button class="dock-item" title="Weather">
+          <img src="Images/Weather.png" alt="Weather" class="dock-icon">
+        </button>
+        <span class="dock-dot" id="dot-weather-window"></span>
+      </div>
+      <div class="dock-wrapper" onclick="toggleWindow('settings-window')" data-app="settings-window">
+        <button class="dock-item" title="Settings">
+          <img src="Images/Settings.png" alt="Settings" class="dock-icon">
+        </button>
+        <span class="dock-dot" id="dot-settings-window"></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
