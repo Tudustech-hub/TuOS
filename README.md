@@ -1,15 +1,15 @@
-![TuOS Banner](https://raw.githubusercontent.com/Tudustech-hub/TuOS/main/Images/banner.png)
+![TuOS Banner](https://ram.githubusercontent.com/Tudustech-hub/TuOS/main/Images/banner.png)
 
-# TuOS
+#TuOS
 
-A macOS-inspired WebOS built with HTML, CSS, and JavaScript.
+A macOS inspired WebOS built using HTML, CSS and JavaScript.
 
-## Features
+##Features
 
 - Setup Assistant
 - Lock Screen
 - Draggable Windows
-- Built-in Apps: Finder, Notes, Calculator, Weather, Settings
+-Built-in Apps: Finder,Notes,Calculator,Weather and settings
 
 ## How to Run
 
