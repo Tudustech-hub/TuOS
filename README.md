@@ -1,10 +1,10 @@
 ![TuOS Banner](https://raw.githubusercontent.com/Tudustech-hub/TuOS/main/Images/banner.png)
 
-#TuOS
+# TuOS
 
 A macOS inspired WebOS built using HTML, CSS and JavaScript.
 
-##Features
+## Features
 
 - Setup Assistant
 - Lock Screen
