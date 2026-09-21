@@ -1,4 +1,4 @@
-![TuOS Banner](https://ram.githubusercontent.com/Tudustech-hub/TuOS/main/Images/banner.png)
+![TuOS Banner](https://raw.githubusercontent.com/Tudustech-hub/TuOS/main/Images/banner.png)
 
 #TuOS
 
