@@ -1,14 +1,12 @@
-// Calendar State
+ 
 let calCurrentDate = new Date();
 
-// Clock & Calendar Header
 function updateClock() {
   const now = new Date();
   const topbarClock = document.getElementById('topbar-clock-display');
   const calLiveTime = document.getElementById('cal-live-time');
   const calLiveDate = document.getElementById('cal-live-date');
 
-  // Format: "Fri, Sep 25  7:35 PM"
   if (topbarClock) {
     const weekday = now.toLocaleDateString(undefined, { weekday: 'short' });
     const month = now.toLocaleDateString(undefined, { month: 'short' });
@@ -17,7 +15,6 @@ function updateClock() {
     topbarClock.textContent = `${weekday}, ${month} ${day}  ${timeStr}`;
   }
 
-  // Live time with seconds: "19:35:09" or "7:35:09 PM"
   if (calLiveTime) {
     calLiveTime.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   }
@@ -45,12 +42,12 @@ function renderCalendar(date) {
   daysGridEl.innerHTML = '';
 
   const firstDayIndex = new Date(year, month, 1).getDay();
-  // Adjust Monday-first (0 = Monday, 6 = Sunday)
+
   const startingDay = (firstDayIndex + 6) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const daysInPrevMonth = new Date(year, month, 0).getDate();
 
-  // Previous month trailing days
+
   for (let i = startingDay - 1; i >= 0; i--) {
     const cell = document.createElement('div');
     cell.className = 'cal-day-cell other-month';
@@ -61,7 +58,7 @@ function renderCalendar(date) {
   const today = new Date();
   const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
 
-  // Current month days
+
   for (let d = 1; d <= daysInMonth; d++) {
     const cell = document.createElement('div');
     cell.className = 'cal-day-cell';
@@ -72,7 +69,7 @@ function renderCalendar(date) {
     daysGridEl.appendChild(cell);
   }
 
-  // Next month leading days to complete grid
+
   const totalCells = startingDay + daysInMonth;
   const remainingCells = (7 - (totalCells % 7)) % 7;
   for (let n = 1; n <= remainingCells; n++) {
@@ -95,7 +92,7 @@ function nextCalMonth(e) {
   renderCalendar(calCurrentDate);
 }
 
-// Depth Management & Active Window
+
 let highestZ = 100;
 function bringToFront(win) {
   highestZ++;
@@ -104,7 +101,7 @@ function bringToFront(win) {
   win.classList.add('active-window');
 }
 
-// Window Transform States (Hardware Accelerated 60 FPS translate3d)
+
 const windowStates = new Map();
 
 function initWindowTransform(win) {
@@ -112,7 +109,7 @@ function initWindowTransform(win) {
   const initialLeft = win.offsetLeft || 120;
   const initialTop = win.offsetTop || 80;
   
-  // Clear style left/top to prevent layout recalculations
+
   win.style.left = '0px';
   win.style.top = '0px';
   
@@ -130,7 +127,6 @@ function initWindowTransform(win) {
   return state;
 }
 
-// Window Controls with Dock Bounce & Organic Scale Transitions
 function openWindow(id) {
   const win = document.getElementById(id);
   if (!win) return;
@@ -162,12 +158,10 @@ function openWindow(id) {
     startScale = 0.4;
   }
 
-  // Initial state: smooth scale and slight elevation
   win.style.transform = `translate3d(${originX}px, ${originY}px, 0) scale(${startScale})`;
   win.style.opacity = '0';
   win.classList.add('is-open');
 
-  // Trigger GPU fluid transition into place
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       win.style.transform = state.isMaximized 
@@ -188,7 +182,7 @@ function openWindow(id) {
   }
 }
 
-// Window Close with Fluid Shrink Animation
+
 function closeWindow(id) {
   const win = document.getElementById(id);
   if (!win) return;
@@ -263,7 +257,7 @@ function toggleMaximize(id) {
   bringToFront(win);
 }
 
-// Launchpad with smooth spring zoom and fade
+
 function toggleLaunchpad() {
   const lp = document.getElementById('launchpad-overlay');
   const dot = document.getElementById('dot-launchpad');
@@ -294,8 +288,7 @@ function toggleLaunchpad() {
     }
   }
 }
-
-// macOS Dock Magnification Wave without layout jitter
+ 
 const dock = document.getElementById('macos-dock');
 const dockItems = document.querySelectorAll('.dock-item');
 const MAX_SCALE = 1.28;
@@ -340,7 +333,6 @@ if (dock) {
   });
 }
 
-// 60 FPS Hardware-Accelerated Window Dragging (requestAnimationFrame + translate3d)
 document.querySelectorAll('.window').forEach(windowEl => {
   const header = windowEl.querySelector('.window-header');
   if (!header) return;
