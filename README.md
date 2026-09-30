@@ -1,3 +1,4 @@
+![TuOS Banner](https://raw.githubusercontent.com/Tudustech-hub/TuOS/main/Images/banner.png)
 # TuOS
 
 A clean macOS-style desktop running in your browser, built with vanilla HTML, CSS, and JavaScript.
