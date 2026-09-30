@@ -37,9 +37,7 @@ body {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* ==========================================================================
-   1. Menu Bar: Frosted Glass Panel
-   ========================================================================== */
+
 .top-bar {
   position: fixed;
   top: 0;
@@ -244,6 +242,92 @@ body {
   opacity: 0.3;
 }
 
+.cal-timer-box {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cal-timer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #a1a1a6;
+}
+
+.cal-timer-display {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+
+.cal-timer-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.cal-preset-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #e5e5ea;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 0;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.cal-preset-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.cal-preset-btn:active {
+  transform: scale(0.95);
+}
+
+.cal-timer-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.cal-timer-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 7px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 0;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.cal-timer-btn.primary {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+
+.cal-timer-btn:hover {
+  filter: brightness(1.1);
+}
+
+.cal-timer-btn:active {
+  transform: scale(0.96);
+}
+
 .topbar-icon-wrap {
   width: 22px;
   height: 22px;
@@ -433,9 +517,7 @@ body {
   cursor: pointer;
 }
 
-/* ==========================================================================
-   2. Desktop Workspace & 60 FPS GPU Window Architecture
-   ========================================================================== */
+
 .desktop {
   position: fixed;
   top: 28px;
@@ -596,7 +678,7 @@ body {
   flex-direction: column;
 }
 
-/* Window Specifics */
+
 .about-body {
   text-align: center;
   padding: 28px 20px;
@@ -1042,9 +1124,123 @@ body {
   transform: scale(0.94);
 }
 
-/* ==========================================================================
-   3. Launchpad Overlay
-   ========================================================================== */
+.clock-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.clock-nav-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 3px;
+  border-radius: 8px;
+}
+
+.clock-tab-btn {
+  background: transparent;
+  border: none;
+  color: #a1a1a6;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.clock-tab-btn.active {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.clock-tab-panel {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.clock-tab-panel.active {
+  display: flex;
+}
+
+.clock-big-digits {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", monospace;
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  margin: 6px 0;
+}
+
+.clock-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.clock-input-row input {
+  width: 52px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  color: #ffffff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  outline: none;
+}
+
+.clock-input-row input:focus {
+  border-color: var(--accent-blue);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.clock-input-row span {
+  font-weight: bold;
+  font-size: 16px;
+  opacity: 0.6;
+}
+
+.clock-action-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.clock-btn {
+  flex: 1;
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.clock-btn.primary {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+
+.clock-btn:hover {
+  filter: brightness(1.1);
+}
+
+.clock-btn:active {
+  transform: scale(0.96);
+}
+
+
+
 #launchpad-overlay {
   display: none;
   position: fixed;
@@ -1134,9 +1330,7 @@ body {
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
 }
 
-/* ==========================================================================
-   4. macOS Taskbar / Dock
-   ========================================================================== */
+
 .dock-container {
   position: fixed;
   bottom: 12px;
@@ -1173,7 +1367,7 @@ body {
   position: relative;
 }
 
-/* macOS Frosted Glass Dock Tooltip */
+
 .dock-wrapper::before {
   content: attr(data-tooltip);
   position: absolute;
@@ -1211,10 +1405,26 @@ body {
   z-index: 100000;
 }
 
-.dock-wrapper:hover::before,
-.dock-wrapper:hover::after {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+.dock-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transform-origin: bottom center;
+  position: relative;
+  transition: opacity 0.25s ease, transform 0.25s ease, width 0.25s ease;
+}
+
+.dock-wrapper.removing {
+  opacity: 0 !important;
+  transform: translateY(-24px) scale(0.3) !important;
+  pointer-events: none;
+}
+
+.dock-context-menu {
+  position: fixed;
+  z-index: 1000002;
+  min-width: 150px;
 }
 
 .dock-wrapper.bouncing::before,
@@ -1284,9 +1494,7 @@ body {
   opacity: 1;
 }
 
-/* ==========================================================================
-   5. Lock Screen Overlay
-   ========================================================================== */
+
 #lock-screen {
   display: none;
   position: fixed;
@@ -1449,9 +1657,7 @@ body {
   opacity: 1;
 }
 
-/* ==========================================================================
-   6. Setup Assistant Window Overlay
-   ========================================================================== */
+
 #setup-modal-container {
   display: none;
   position: fixed;

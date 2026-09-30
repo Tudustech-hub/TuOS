@@ -1,11 +1,10 @@
- 
-let calCurrentDate = new Date();
+let calDate = new Date();
 
 function updateClock() {
   const now = new Date();
   const topbarClock = document.getElementById('topbar-clock-display');
-  const calLiveTime = document.getElementById('cal-live-time');
-  const calLiveDate = document.getElementById('cal-live-date');
+  const liveTime = document.getElementById('cal-live-time');
+  const liveDate = document.getElementById('cal-live-date');
 
   if (topbarClock) {
     const weekday = now.toLocaleDateString(undefined, { weekday: 'short' });
@@ -15,22 +14,21 @@ function updateClock() {
     topbarClock.textContent = `${weekday}, ${month} ${day}  ${timeStr}`;
   }
 
-  if (calLiveTime) {
-    calLiveTime.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  if (liveTime) {
+    liveTime.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   }
 
-  if (calLiveDate) {
-    calLiveDate.textContent = now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  if (liveDate) {
+    liveDate.textContent = now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   }
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-// Interactive Calendar Generator
 function renderCalendar(date) {
   const monthNameEl = document.getElementById('cal-month-name');
-  const daysGridEl = document.getElementById('cal-days-grid');
-  if (!daysGridEl) return;
+  const grid = document.getElementById('cal-days-grid');
+  if (!grid) return;
 
   const year = date.getFullYear();
   const month = date.getMonth();
@@ -39,25 +37,22 @@ function renderCalendar(date) {
     monthNameEl.textContent = date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
   }
 
-  daysGridEl.innerHTML = '';
+  grid.innerHTML = '';
 
-  const firstDayIndex = new Date(year, month, 1).getDay();
-
-  const startingDay = (firstDayIndex + 6) % 7;
+  const firstDay = new Date(year, month, 1).getDay();
+  const startOffset = (firstDay + 6) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const daysInPrevMonth = new Date(year, month, 0).getDate();
+  const daysInPrev = new Date(year, month, 0).getDate();
 
-
-  for (let i = startingDay - 1; i >= 0; i--) {
+  for (let i = startOffset - 1; i >= 0; i--) {
     const cell = document.createElement('div');
     cell.className = 'cal-day-cell other-month';
-    cell.textContent = daysInPrevMonth - i;
-    daysGridEl.appendChild(cell);
+    cell.textContent = daysInPrev - i;
+    grid.appendChild(cell);
   }
 
   const today = new Date();
   const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
-
 
   for (let d = 1; d <= daysInMonth; d++) {
     const cell = document.createElement('div');
@@ -66,32 +61,203 @@ function renderCalendar(date) {
       cell.classList.add('today');
     }
     cell.textContent = d;
-    daysGridEl.appendChild(cell);
+    grid.appendChild(cell);
   }
 
-
-  const totalCells = startingDay + daysInMonth;
-  const remainingCells = (7 - (totalCells % 7)) % 7;
-  for (let n = 1; n <= remainingCells; n++) {
+  const total = startOffset + daysInMonth;
+  const remaining = (7 - (total % 7)) % 7;
+  for (let n = 1; n <= remaining; n++) {
     const cell = document.createElement('div');
     cell.className = 'cal-day-cell other-month';
     cell.textContent = n;
-    daysGridEl.appendChild(cell);
+    grid.appendChild(cell);
   }
 }
 
 function prevCalMonth(e) {
   if (e) e.stopPropagation();
-  calCurrentDate.setMonth(calCurrentDate.getMonth() - 1);
-  renderCalendar(calCurrentDate);
+  calDate.setMonth(calDate.getMonth() - 1);
+  renderCalendar(calDate);
 }
 
 function nextCalMonth(e) {
   if (e) e.stopPropagation();
-  calCurrentDate.setMonth(calCurrentDate.getMonth() + 1);
-  renderCalendar(calCurrentDate);
+  calDate.setMonth(calDate.getMonth() + 1);
+  renderCalendar(calDate);
 }
 
+let calTimerInterval = null;
+let calTimerSeconds = 0;
+
+function formatDuration(sec) {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
+}
+
+function updateCalTimerDisplay() {
+  const el = document.getElementById('cal-timer-display');
+  if (el) el.textContent = formatDuration(calTimerSeconds);
+}
+
+function setCalTimer(sec) {
+  clearInterval(calTimerInterval);
+  calTimerInterval = null;
+  calTimerSeconds = sec;
+  updateCalTimerDisplay();
+  const btn = document.getElementById('cal-timer-toggle');
+  if (btn) btn.textContent = 'Start';
+}
+
+function toggleCalTimer() {
+  const btn = document.getElementById('cal-timer-toggle');
+  if (calTimerInterval) {
+    clearInterval(calTimerInterval);
+    calTimerInterval = null;
+    if (btn) btn.textContent = 'Resume';
+    return;
+  }
+
+  if (calTimerSeconds <= 0) return;
+
+  if (btn) btn.textContent = 'Pause';
+  calTimerInterval = setInterval(() => {
+    calTimerSeconds--;
+    updateCalTimerDisplay();
+    if (calTimerSeconds <= 0) {
+      clearInterval(calTimerInterval);
+      calTimerInterval = null;
+      if (btn) btn.textContent = 'Start';
+      alert('TuOS Timer: Time is up!');
+    }
+  }, 1000);
+}
+
+function resetCalTimer() {
+  clearInterval(calTimerInterval);
+  calTimerInterval = null;
+  calTimerSeconds = 0;
+  updateCalTimerDisplay();
+  const btn = document.getElementById('cal-timer-toggle');
+  if (btn) btn.textContent = 'Start';
+}
+
+function switchClockTab(tab) {
+  const timerTabBtn = document.getElementById('tab-btn-timer');
+  const swTabBtn = document.getElementById('tab-btn-stopwatch');
+  const timerPanel = document.getElementById('clock-timer-panel');
+  const swPanel = document.getElementById('clock-stopwatch-panel');
+
+  if (tab === 'timer') {
+    timerTabBtn.classList.add('active');
+    swTabBtn.classList.remove('active');
+    timerPanel.classList.add('active');
+    swPanel.classList.remove('active');
+  } else {
+    swTabBtn.classList.add('active');
+    timerTabBtn.classList.remove('active');
+    swPanel.classList.add('active');
+    timerPanel.classList.remove('active');
+  }
+}
+
+let appTimerInterval = null;
+let appTimerRemaining = 900;
+
+function updateAppTimerDisplay() {
+  const display = document.getElementById('app-timer-display');
+  if (display) display.textContent = formatDuration(appTimerRemaining);
+}
+
+function toggleAppTimer() {
+  const btn = document.getElementById('app-timer-start-btn');
+  if (appTimerInterval) {
+    clearInterval(appTimerInterval);
+    appTimerInterval = null;
+    if (btn) btn.textContent = 'Resume';
+    return;
+  }
+
+  if (appTimerRemaining <= 0) {
+    const h = parseInt(document.getElementById('app-timer-hours')?.value || '0', 10) || 0;
+    const m = parseInt(document.getElementById('app-timer-mins')?.value || '0', 10) || 0;
+    const s = parseInt(document.getElementById('app-timer-secs')?.value || '0', 10) || 0;
+    appTimerRemaining = h * 3600 + m * 60 + s;
+    if (appTimerRemaining <= 0) return;
+  }
+
+  if (btn) btn.textContent = 'Pause';
+  appTimerInterval = setInterval(() => {
+    appTimerRemaining--;
+    updateAppTimerDisplay();
+    if (appTimerRemaining <= 0) {
+      clearInterval(appTimerInterval);
+      appTimerInterval = null;
+      if (btn) btn.textContent = 'Start';
+      alert('TuOS Clock: Timer finished!');
+    }
+  }, 1000);
+}
+
+function resetAppTimer() {
+  clearInterval(appTimerInterval);
+  appTimerInterval = null;
+  const h = parseInt(document.getElementById('app-timer-hours')?.value || '0', 10) || 0;
+  const m = parseInt(document.getElementById('app-timer-mins')?.value || '0', 10) || 0;
+  const s = parseInt(document.getElementById('app-timer-secs')?.value || '0', 10) || 0;
+  appTimerRemaining = h * 3600 + m * 60 + s;
+  updateAppTimerDisplay();
+  const btn = document.getElementById('app-timer-start-btn');
+  if (btn) btn.textContent = 'Start';
+}
+
+let swInterval = null;
+let swStartTime = 0;
+let swElapsed = 0;
+
+function updateSwDisplay() {
+  const display = document.getElementById('app-stopwatch-display');
+  if (!display) return;
+  const totalMs = swElapsed;
+  const mins = Math.floor(totalMs / 60000);
+  const secs = Math.floor((totalMs % 60000) / 1000);
+  const cs = Math.floor((totalMs % 1000) / 10);
+  display.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
+}
+
+function toggleAppStopwatch() {
+  const btn = document.getElementById('app-stopwatch-start-btn');
+  if (swInterval) {
+    clearInterval(swInterval);
+    swInterval = null;
+    swElapsed += Date.now() - swStartTime;
+    if (btn) btn.textContent = 'Resume';
+    return;
+  }
+
+  swStartTime = Date.now();
+  if (btn) btn.textContent = 'Pause';
+  swInterval = setInterval(() => {
+    const currentElapsed = swElapsed + (Date.now() - swStartTime);
+    const mins = Math.floor(currentElapsed / 60000);
+    const secs = Math.floor((currentElapsed % 60000) / 1000);
+    const cs = Math.floor((currentElapsed % 1000) / 10);
+    const display = document.getElementById('app-stopwatch-display');
+    if (display) {
+      display.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
+    }
+  }, 30);
+}
+
+function resetAppStopwatch() {
+  clearInterval(swInterval);
+  swInterval = null;
+  swElapsed = 0;
+  updateSwDisplay();
+  const btn = document.getElementById('app-stopwatch-start-btn');
+  if (btn) btn.textContent = 'Start';
+}
 
 let highestZ = 100;
 function bringToFront(win) {
@@ -101,7 +267,6 @@ function bringToFront(win) {
   win.classList.add('active-window');
 }
 
-
 const windowStates = new Map();
 
 function initWindowTransform(win) {
@@ -109,7 +274,6 @@ function initWindowTransform(win) {
   const initialLeft = win.offsetLeft || 120;
   const initialTop = win.offsetTop || 80;
   
-
   win.style.left = '0px';
   win.style.top = '0px';
   
@@ -132,7 +296,6 @@ function openWindow(id) {
   if (!win) return;
 
   const state = initWindowTransform(win);
-
   const wrapper = document.querySelector(`.dock-wrapper[data-app="${id}"]`);
   if (wrapper) {
     wrapper.classList.remove('bouncing');
@@ -145,7 +308,6 @@ function openWindow(id) {
   win.classList.remove('is-closing');
   win.classList.add('is-animating-state');
   
-  // Calculate dock icon origin for organic scale zoom from dock
   let originX = state.x;
   let originY = state.y;
   let startScale = 0.85;
@@ -165,12 +327,10 @@ function openWindow(id) {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       win.style.transform = state.isMaximized 
-        ? `translate3d(0px, 0px, 0) scale(1)` 
+        ? 'translate3d(0px, 0px, 0) scale(1)' 
         : `translate3d(${state.x}px, ${state.y}px, 0) scale(1)`;
       win.style.opacity = '1';
-      setTimeout(() => {
-        win.classList.remove('is-animating-state');
-      }, 320);
+      setTimeout(() => win.classList.remove('is-animating-state'), 320);
     });
   });
 
@@ -181,7 +341,6 @@ function openWindow(id) {
     fetchLiveWeather();
   }
 }
-
 
 function closeWindow(id) {
   const win = document.getElementById(id);
@@ -247,16 +406,12 @@ function toggleMaximize(id) {
     win.classList.add('maximized');
     win.style.width = '100vw';
     win.style.height = 'calc(100vh - 28px - 74px)';
-    win.style.transform = `translate3d(0px, 0px, 0) scale(1)`;
+    win.style.transform = 'translate3d(0px, 0px, 0) scale(1)';
   }
 
-  setTimeout(() => {
-    win.classList.remove('is-animating-state');
-  }, 320);
-
+  setTimeout(() => win.classList.remove('is-animating-state'), 320);
   bringToFront(win);
 }
-
 
 function toggleLaunchpad() {
   const lp = document.getElementById('launchpad-overlay');
@@ -288,7 +443,7 @@ function toggleLaunchpad() {
     }
   }
 }
- 
+
 const dock = document.getElementById('macos-dock');
 const dockItems = document.querySelectorAll('.dock-item');
 const MAX_SCALE = 1.28;
@@ -393,7 +548,6 @@ document.querySelectorAll('.window').forEach(windowEl => {
   });
   document.addEventListener('mouseup', stopDrag);
 
-  // Touch Support for mobile/tablets
   header.addEventListener('touchstart', (e) => {
     if (e.target.classList.contains('dot')) return;
     const touch = e.touches[0];
@@ -409,7 +563,6 @@ document.querySelectorAll('.window').forEach(windowEl => {
   document.addEventListener('touchend', stopDrag);
 });
 
-// Dropdowns
 function toggleDropdown(id) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -418,7 +571,7 @@ function toggleDropdown(id) {
     const isOpening = !el.classList.contains('is-open');
     closeAllDropdowns();
     if (isOpening) {
-      renderCalendar(calCurrentDate);
+      renderCalendar(calDate);
       el.classList.add('is-open');
     }
     return;
@@ -435,10 +588,128 @@ function closeAllDropdowns() {
   const appDropdown = document.getElementById('apple-dropdown');
   const ccDropdown = document.getElementById('control-center-dropdown');
   const calDropdown = document.getElementById('calendar-dropdown');
+  const dockMenu = document.getElementById('dock-context-menu');
+  const lpMenu = document.getElementById('launchpad-context-menu');
   if (appDropdown) appDropdown.style.display = 'none';
   if (ccDropdown) ccDropdown.style.display = 'none';
   if (calDropdown) calDropdown.classList.remove('is-open');
+  if (dockMenu) dockMenu.style.display = 'none';
+  if (lpMenu) lpMenu.style.display = 'none';
 }
+
+let activeDockAppId = null;
+let activeLpApp = null;
+
+function showDockContextMenu(e, appId) {
+  e.preventDefault();
+  e.stopPropagation();
+  activeDockAppId = appId;
+  const menu = document.getElementById('dock-context-menu');
+  if (!menu) return;
+  closeAllDropdowns();
+  menu.style.display = 'block';
+  menu.style.left = `${Math.min(e.clientX, window.innerWidth - 170)}px`;
+  menu.style.top = `${e.clientY - 42}px`;
+}
+
+function showLaunchpadContextMenu(e, appEl) {
+  e.preventDefault();
+  e.stopPropagation();
+  const appId = appEl.getAttribute('data-app');
+  const appTitle = appEl.getAttribute('data-title');
+  const appIcon = appEl.getAttribute('data-icon');
+  activeLpApp = { id: appId, title: appTitle, icon: appIcon };
+
+  const menu = document.getElementById('launchpad-context-menu');
+  if (!menu) return;
+  closeAllDropdowns();
+
+  const isAlreadyInDock = !!document.querySelector(`.dock-wrapper[data-app="${appId}"]`);
+  const keepBtn = document.getElementById('lp-menu-keep');
+  if (keepBtn) {
+    keepBtn.textContent = isAlreadyInDock ? 'Already in Dock' : 'Keep in Dock';
+    keepBtn.style.opacity = isAlreadyInDock ? '0.5' : '1';
+    keepBtn.style.pointerEvents = isAlreadyInDock ? 'none' : 'auto';
+  }
+
+  menu.style.display = 'block';
+  menu.style.left = `${Math.min(e.clientX, window.innerWidth - 170)}px`;
+  menu.style.top = `${Math.min(e.clientY, window.innerHeight - 50)}px`;
+}
+
+function removeActiveDockApp() {
+  if (!activeDockAppId) return;
+  const wrapper = document.querySelector(`.dock-wrapper[data-app="${activeDockAppId}"]`);
+  closeAllDropdowns();
+  if (wrapper) {
+    wrapper.classList.add('removing');
+    setTimeout(() => {
+      wrapper.remove();
+      saveDockState();
+    }, 250);
+  }
+}
+
+function pinActiveLaunchpadApp() {
+  if (!activeLpApp) return;
+  const { id, title, icon } = activeLpApp;
+  closeAllDropdowns();
+  if (document.querySelector(`.dock-wrapper[data-app="${id}"]`)) return;
+
+  const dockEl = document.getElementById('macos-dock');
+  if (!dockEl) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'dock-wrapper';
+  wrapper.setAttribute('data-app', id);
+  wrapper.setAttribute('data-tooltip', title);
+  wrapper.onclick = () => toggleWindow(id);
+  wrapper.addEventListener('contextmenu', (e) => showDockContextMenu(e, id));
+
+  wrapper.innerHTML = `
+    <button class="dock-item">
+      <img src="${icon}" alt="${title}" class="dock-icon">
+    </button>
+    <span class="dock-dot" id="dot-${id}"></span>
+  `;
+
+  dockEl.appendChild(wrapper);
+  saveDockState();
+
+  wrapper.classList.add('bouncing');
+  setTimeout(() => wrapper.classList.remove('bouncing'), 720);
+}
+
+function saveDockState() {
+  const currentApps = Array.from(document.querySelectorAll('.dock-wrapper'))
+    .map(el => el.getAttribute('data-app'))
+    .filter(Boolean);
+  localStorage.setItem('tuos_dock_apps', JSON.stringify(currentApps));
+}
+
+function initDockState() {
+  const saved = localStorage.getItem('tuos_dock_apps');
+  if (!saved) return;
+  try {
+    const list = JSON.parse(saved);
+    if (!Array.isArray(list)) return;
+    document.querySelectorAll('.dock-wrapper').forEach(w => {
+      const app = w.getAttribute('data-app');
+      if (app !== 'launchpad' && !list.includes(app)) {
+        w.remove();
+      }
+    });
+  } catch {}
+}
+
+document.querySelectorAll('.dock-wrapper').forEach(wrapper => {
+  const appId = wrapper.getAttribute('data-app');
+  wrapper.addEventListener('contextmenu', (e) => showDockContextMenu(e, appId));
+});
+
+document.querySelectorAll('.launchpad-app').forEach(appEl => {
+  appEl.addEventListener('contextmenu', (e) => showLaunchpadContextMenu(e, appEl));
+});
 
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.topbar-icon-wrap') && 
@@ -446,7 +717,9 @@ document.addEventListener('click', (e) => {
       !e.target.closest('.center-menu') &&
       !e.target.closest('#calendar-dropdown') &&
       !e.target.closest('.menu-btn') &&
-      !e.target.closest('#control-center-dropdown')) {
+      !e.target.closest('#control-center-dropdown') &&
+      !e.target.closest('#dock-context-menu') &&
+      !e.target.closest('#launchpad-context-menu')) {
     closeAllDropdowns();
   }
 });
@@ -455,7 +728,6 @@ function adjustBrightness(val) {
   document.documentElement.style.setProperty('--brightness', val / 100);
 }
 
-// Calculator
 const calcDisplay = document.getElementById('calc-display');
 
 function appendCalc(val) {
@@ -481,12 +753,11 @@ function calculateResult() {
   if (!calcDisplay) return;
   try {
     calcDisplay.value = Function('"use strict"; return (' + calcDisplay.value + ')')();
-  } catch (err) {
+  } catch {
     calcDisplay.value = 'Error';
   }
 }
 
-// Weather Service (Real live status & hourly forecast via Open-Meteo)
 const WMO_WEATHER_CODES = {
   0: { desc: 'Clear sky', icon: '☀️' },
   1: { desc: 'Mainly clear', icon: '🌤️' },
@@ -536,7 +807,7 @@ async function fetchLiveWeather() {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&timezone=auto&forecast_days=2`;
 
     const res = await fetch(url);
-    if (!res.ok) throw new Error('Network error');
+    if (!res.ok) throw new Error();
     const data = await res.json();
 
     const current = data.current;
@@ -579,7 +850,7 @@ async function fetchLiveWeather() {
         hourlyTrack.appendChild(card);
       });
     }
-  } catch (err) {
+  } catch {
     if (descEl) descEl.textContent = 'Live status cached';
     if (tempEl && tempEl.textContent === '--°C') tempEl.textContent = '22°C';
     if (windEl && windEl.textContent === '-- km/h') windEl.textContent = '14 km/h';
@@ -615,7 +886,6 @@ async function fetchLiveWeather() {
   }
 }
 
-// Notes Auto-Save
 const notesArea = document.getElementById('notes-textarea');
 if (notesArea) {
   notesArea.value = localStorage.getItem('tuos_saved_notes') || '';
@@ -624,7 +894,6 @@ if (notesArea) {
   });
 }
 
-// Lock Screen
 function updateLockClock() {
   const now = new Date();
   const timeEl = document.getElementById('lock-time');
@@ -668,10 +937,9 @@ function unlockScreen(e) {
   const savedPassword = localStorage.getItem('tuos_password') || '';
 
   if (savedPassword && passInput && passInput.value !== savedPassword) {
-    // macOS shake animation on error
     if (lockForm) {
       lockForm.classList.remove('shake');
-      void lockForm.offsetWidth; // Trigger reflow
+      void lockForm.offsetWidth;
       lockForm.classList.add('shake');
       setTimeout(() => lockForm.classList.remove('shake'), 500);
     }
@@ -686,7 +954,6 @@ function unlockScreen(e) {
     return;
   }
 
-  // Smooth sliding exit translateY(-100%)
   if (lock) {
     lock.classList.add('is-unlocking');
     const onUnlockEnd = () => {
@@ -699,7 +966,6 @@ function unlockScreen(e) {
   if (passInput) passInput.value = '';
 }
 
-// Setup Assistant
 function openSetup() {
   const setupModal = document.getElementById('setup-modal-container');
   if (setupModal) {
@@ -782,8 +1048,8 @@ function resetAll() {
   location.reload();
 }
 
-// First Boot Check & Weather Initialization
 window.addEventListener('DOMContentLoaded', () => {
+  initDockState();
   if (localStorage.getItem('tuos_setup_complete') !== 'true') {
     openSetup();
   }

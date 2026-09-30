@@ -49,6 +49,22 @@
         <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
       </div>
       <div class="cal-days-grid" id="cal-days-grid"></div>
+      <div class="cal-timer-box">
+        <div class="cal-timer-header">
+          <span>Timer</span>
+          <span class="cal-timer-display" id="cal-timer-display">00:00:00</span>
+        </div>
+        <div class="cal-timer-presets">
+          <button class="cal-preset-btn" onclick="setCalTimer(300)">5m</button>
+          <button class="cal-preset-btn" onclick="setCalTimer(900)">15m</button>
+          <button class="cal-preset-btn" onclick="setCalTimer(1800)">30m</button>
+          <button class="cal-preset-btn" onclick="setCalTimer(3600)">1h</button>
+        </div>
+        <div class="cal-timer-controls">
+          <button class="cal-timer-btn primary" id="cal-timer-toggle" onclick="toggleCalTimer()">Start</button>
+          <button class="cal-timer-btn" onclick="resetCalTimer()">Reset</button>
+        </div>
+      </div>
     </div>
 
     <div class="right-menu">
@@ -266,29 +282,71 @@
       </div>
     </div>
 
+    <div class="window" id="clock-window" style="top: 130px; left: 320px; width: 340px;">
+      <div class="window-header">
+        <div class="traffic-lights">
+          <span class="dot close" onclick="closeWindow('clock-window')"></span>
+          <span class="dot minimize" onclick="closeWindow('clock-window')"></span>
+          <span class="dot maximize" onclick="toggleMaximize('clock-window')"></span>
+        </div>
+        <div class="window-title">Clock</div>
+      </div>
+      <div class="window-body clock-body">
+        <div class="clock-nav-tabs">
+          <button class="clock-tab-btn active" id="tab-btn-timer" onclick="switchClockTab('timer')">Timer</button>
+          <button class="clock-tab-btn" id="tab-btn-stopwatch" onclick="switchClockTab('stopwatch')">Stopwatch</button>
+        </div>
+        <div class="clock-tab-panel active" id="clock-timer-panel">
+          <div class="clock-big-digits" id="app-timer-display">00:15:00</div>
+          <div class="clock-input-row">
+            <input type="number" id="app-timer-hours" min="0" max="23" placeholder="HH" value="0">
+            <span>:</span>
+            <input type="number" id="app-timer-mins" min="0" max="59" placeholder="MM" value="15">
+            <span>:</span>
+            <input type="number" id="app-timer-secs" min="0" max="59" placeholder="SS" value="0">
+          </div>
+          <div class="clock-action-row">
+            <button class="clock-btn primary" id="app-timer-start-btn" onclick="toggleAppTimer()">Start</button>
+            <button class="clock-btn" onclick="resetAppTimer()">Reset</button>
+          </div>
+        </div>
+        <div class="clock-tab-panel" id="clock-stopwatch-panel">
+          <div class="clock-big-digits" id="app-stopwatch-display">00:00.00</div>
+          <div class="clock-action-row">
+            <button class="clock-btn primary" id="app-stopwatch-start-btn" onclick="toggleAppStopwatch()">Start</button>
+            <button class="clock-btn" onclick="resetAppStopwatch()">Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="launchpad-overlay" onclick="toggleLaunchpad()">
       <div class="launchpad-grid" onclick="event.stopPropagation()">
-        <div class="launchpad-app" onclick="openWindow('finder-window'); toggleLaunchpad();">
+        <div class="launchpad-app" data-app="finder-window" data-title="Finder" data-icon="Images/Folder.png" onclick="openWindow('finder-window'); toggleLaunchpad();">
           <img src="Images/Folder.png" alt="Finder">
           <span>Finder</span>
         </div>
-        <div class="launchpad-app" onclick="openWindow('notes-window'); toggleLaunchpad();">
+        <div class="launchpad-app" data-app="notes-window" data-title="Notes" data-icon="Images/Notes.png" onclick="openWindow('notes-window'); toggleLaunchpad();">
           <img src="Images/Notes.png" alt="Notes">
           <span>Notes</span>
         </div>
-        <div class="launchpad-app" onclick="openWindow('calc-window'); toggleLaunchpad();">
+        <div class="launchpad-app" data-app="calc-window" data-title="Calculator" data-icon="Images/Calculator.png" onclick="openWindow('calc-window'); toggleLaunchpad();">
           <img src="Images/Calculator.png" alt="Calculator">
           <span>Calculator</span>
         </div>
-        <div class="launchpad-app" onclick="openWindow('weather-window'); toggleLaunchpad();">
+        <div class="launchpad-app" data-app="weather-window" data-title="Weather" data-icon="Images/Weather.png" onclick="openWindow('weather-window'); toggleLaunchpad();">
           <img src="Images/Weather.png" alt="Weather">
           <span>Weather</span>
         </div>
-        <div class="launchpad-app" onclick="openWindow('settings-window'); toggleLaunchpad();">
+        <div class="launchpad-app" data-app="clock-window" data-title="Clock" data-icon="Images/Clock.png" onclick="openWindow('clock-window'); toggleLaunchpad();">
+          <img src="Images/Clock.png" alt="Clock">
+          <span>Clock</span>
+        </div>
+        <div class="launchpad-app" data-app="settings-window" data-title="Settings" data-icon="Images/Settings.png" onclick="openWindow('settings-window'); toggleLaunchpad();">
           <img src="Images/Settings.png" alt="Settings">
           <span>Settings</span>
         </div>
-        <div class="launchpad-app" onclick="openWindow('about-window'); toggleLaunchpad();">
+        <div class="launchpad-app" data-app="about-window" data-title="About TuOS" data-icon="Images/LaunchPad.png" onclick="openWindow('about-window'); toggleLaunchpad();">
           <img src="Images/LaunchPad.png" alt="About">
           <span>About TuOS</span>
         </div>
@@ -415,6 +473,12 @@
         </button>
         <span class="dock-dot" id="dot-weather-window"></span>
       </div>
+      <div class="dock-wrapper" onclick="toggleWindow('clock-window')" data-app="clock-window" data-tooltip="Clock">
+        <button class="dock-item">
+          <img src="Images/Clock.png" alt="Clock" class="dock-icon">
+        </button>
+        <span class="dock-dot" id="dot-clock-window"></span>
+      </div>
       <div class="dock-wrapper" onclick="toggleWindow('settings-window')" data-app="settings-window" data-tooltip="Settings">
         <button class="dock-item">
           <img src="Images/Settings.png" alt="Settings" class="dock-icon">
@@ -423,6 +487,14 @@
       </div>
     </div>
   </footer>
+
+  <div id="dock-context-menu" class="dropdown-menu dock-context-menu">
+    <div class="dropdown-item" id="dock-menu-remove" onclick="removeActiveDockApp()">Remove from Dock</div>
+  </div>
+
+  <div id="launchpad-context-menu" class="dropdown-menu dock-context-menu">
+    <div class="dropdown-item" id="lp-menu-keep" onclick="pinActiveLaunchpadApp()">Keep in Dock</div>
+  </div>
 
   <script src="script.js"></script>
 </body>
